@@ -1,0 +1,82 @@
+# --------------------
+# Flutter / Dart
+# --------------------
+.dart_tool/
+.packages
+.pub/
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+coverage/
+*.lock
+
+# Flutter SDK (do not commit)
+.flutter/
+
+# --------------------
+# Android
+# --------------------
+android/.gradle/
+android/build/
+android/local.properties
+android/**/build/
+android/**/.cxx/
+android/**/obj/
+android/**/.idea/
+
+# Keystore files
+*.jks
+*.keystore
+
+# --------------------
+# iOS
+# --------------------
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/ephemeral/
+ios/Flutter/App.framework
+ios/Flutter/Flutter.framework
+ios/Flutter/Generated.xcconfig
+ios/Flutter/flutter_export_environment.sh
+ios/build/
+
+# Xcode
+*.xcworkspace
+*.xcuserstate
+*.xcuserdata/
+DerivedData/
+
+# --------------------
+# macOS / Windows / Linux
+# --------------------
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --------------------
+# IDEs
+# --------------------
+.idea/
+.vscode/
+*.iml
+
+# --------------------
+# Logs
+# --------------------
+*.log
+
+# --------------------
+# Generated files
+# --------------------
+*.class
+*.jar
+*.aar
+*.apk
+*.ap_
+
+# --------------------
+# Optional (local overrides)
+# --------------------
+.env
+.env.*

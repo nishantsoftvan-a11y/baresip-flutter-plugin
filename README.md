@@ -80,7 +80,7 @@ From the root of the `BareSipFinal` Android project, run:
 The output AAR is at:
 
 ```
-BareSipSdk/build/outputs/aar/BareSipSdk-release.aar
+android/libs/BareSipSdk-release.aar
 ```
 
 ---

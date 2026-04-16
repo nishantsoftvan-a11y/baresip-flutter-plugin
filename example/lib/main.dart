@@ -69,10 +69,11 @@ class _RootNavigatorState extends State<_RootNavigator> {
     if (_autoLoginAttempted) return;
     _autoLoginAttempted = true;
     final state = context.read<AppState>();
-    await state.initialize(widget.savedConfig);
-    if (mounted && state.lastError == null) {
-      await state.login();
-    }
+    // initialize() triggers notifyListeners() which rebuilds the navigator
+    // and unmounts this widget — so we must NOT check mounted after it.
+    // Instead, delegate both initialize + login to AppState so the login
+    // call is not gated on this widget's mounted state.
+    await state.initializeAndLogin(widget.savedConfig);
   }
 
   @override

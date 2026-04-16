@@ -67,11 +67,11 @@ class AppState extends ChangeNotifier {
 
   String get regLabel {
     switch (regState) {
-      case RegistrationState.registering:   return 'Registering…';
+      case RegistrationState.registering:   return 'Registering';
       case RegistrationState.registered:    return 'Registered';
-      case RegistrationState.failed:        return 'Failed${regReason.isNotEmpty ? ": $regReason" : ""}';
-      case RegistrationState.unregistering: return 'Unregistering…';
-      case RegistrationState.offline:       return 'Offline';
+      case RegistrationState.failed:        return 'Unregistered';
+      case RegistrationState.unregistering: return 'Unregistered';
+      case RegistrationState.offline:       return 'Idle';
     }
   }
 
@@ -97,18 +97,37 @@ class AppState extends ChangeNotifier {
 
   /// Ensures [input] is a full SIP URI.
   /// - Already a full URI (starts with `sip:` or `sips:`) → returned as-is
-  /// - Plain number/username → `sip:<input>@<host>`
-  ///   (port is NOT appended — the SDK resolves it from the account config)
+  /// - Plain number/username → `sip:<input>@<host>` (clean AOR format)
+  ///
+  /// Per RFC 3261, the URI should be the Address of Record (AOR) without
+  /// port or transport parameters. Routing is handled by the outbound proxy
+  /// configured in the account settings.
   String _buildSipUri(String input) {
     final trimmed = input.trim();
+    
+    // If already a full URI, return as-is
     if (trimmed.startsWith('sip:') || trimmed.startsWith('sips:')) {
       return trimmed;
     }
+    
     final cfg = config;
     if (cfg != null) {
-      // Use host only — SDK appends port internally from the account line.
-      return 'sip:$trimmed@${cfg.host}';
+      // Sanitize input to remove spaces
+      final sanitized = trimmed.replaceAll(RegExp(r'\s+'), '');
+      
+      // Clean host (remove port if accidentally included)
+      final cleanHost = cfg.host.split(':').first;
+      
+      // Use sips: scheme for TLS/WSS, sip: for others
+      final scheme = (cfg.transport == 'tls' || cfg.transport == 'wss') 
+          ? 'sips' 
+          : 'sip';
+      
+      // Build clean AOR: scheme:user@domain (no port, no transport)
+      // Outbound proxy in account config handles routing
+      return '$scheme:$sanitized@$cleanHost:5060';
     }
+    
     return trimmed;
   }
 
@@ -119,10 +138,36 @@ class AppState extends ChangeNotifier {
     try {
       await _client.initialize(cfg);
       config = cfg;
-      // Persist credentials so the app auto-logs in after being killed
       await CredentialsStore.save(cfg);
       notifyListeners();
     } catch (e) {
+      lastError = e.toString();
+      notifyListeners();
+    } finally {
+      _setBusy(false);
+    }
+  }
+
+  /// Initializes the SDK and immediately calls login() in one atomic operation.
+  /// Use this for auto-login on startup — avoids the mounted-check race where
+  /// initialize() triggers a rebuild that unmounts the calling widget before
+  /// login() can be called.
+  /// The [_autoLoginDone] flag prevents duplicate calls if the widget rebuilds.
+  bool _autoLoginDone = false;
+
+  Future<void> initializeAndLogin(SipConfig cfg) async {
+    if (_autoLoginDone) return;
+    _autoLoginDone = true;
+    _setBusy(true);
+    try {
+      await _client.initialize(cfg);
+      config = cfg;
+      await CredentialsStore.save(cfg);
+      notifyListeners();
+      // login() immediately after — no widget lifecycle dependency
+      await _client.login();
+    } catch (e) {
+      _autoLoginDone = false; // allow retry on error
       lastError = e.toString();
       notifyListeners();
     } finally {
@@ -141,7 +186,6 @@ class AppState extends ChangeNotifier {
       _setBusy(false);
     }
   }
-
   /// Logs out and goes offline but keeps the config — stays on HomeScreen.
   Future<void> goOffline() async {
     _setBusy(true);
@@ -167,6 +211,7 @@ class AppState extends ChangeNotifier {
     }
     // Clear persisted credentials so we don't auto-login next time
     await CredentialsStore.clear();
+    _autoLoginDone = false; // allow fresh login next time
     config = null;
     regState = RegistrationState.offline;
     regReason = '';

@@ -160,12 +160,13 @@ class _RegStatusBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final (color, icon) = switch (state.regState) {
-      RegistrationState.registering   => (Colors.orange, Icons.sync),
-      RegistrationState.unregistering => (Colors.orange, Icons.sync),
-      RegistrationState.failed        => (Colors.red, Icons.error_outline),
-      RegistrationState.offline       => (Colors.grey, Icons.cloud_off),
-      RegistrationState.registered    => (Colors.green, Icons.check_circle),
+    // Map SDK states → 4 display states
+    final (color, icon, spinning) = switch (state.regState) {
+      RegistrationState.registering   => (Colors.orange,   Icons.sync,          true),
+      RegistrationState.registered    => (Colors.green,    Icons.check_circle,  false),
+      RegistrationState.unregistering => (Colors.grey,     Icons.remove_circle_outline, false),
+      RegistrationState.failed        => (Colors.grey,     Icons.remove_circle_outline, false),
+      RegistrationState.offline       => (Colors.blueGrey, Icons.radio_button_unchecked, false),
     };
 
     return Container(
@@ -177,8 +178,7 @@ class _RegStatusBar extends StatelessWidget {
           const SizedBox(width: 8),
           Text(state.regLabel,
               style: TextStyle(color: color, fontSize: 13, fontWeight: FontWeight.w500)),
-          if (state.regState == RegistrationState.registering ||
-              state.regState == RegistrationState.unregistering) ...[
+          if (spinning) ...[
             const SizedBox(width: 10),
             SizedBox(width: 12, height: 12,
                 child: CircularProgressIndicator(strokeWidth: 1.5, color: color)),

@@ -120,12 +120,13 @@ class _StatusRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Map SDK states → 4 display states
     final (label, color) = switch (state.regState) {
-      RegistrationState.registered    => ('Registered',    Colors.green),
-      RegistrationState.registering   => ('Registering…',  Colors.orange),
-      RegistrationState.unregistering => ('Unregistering…',Colors.orange),
-      RegistrationState.failed        => ('Failed',         Colors.red),
-      RegistrationState.offline       => ('Offline',        Colors.grey),
+      RegistrationState.registered    => ('Registered',   Colors.green),
+      RegistrationState.registering   => ('Registering',  Colors.orange),
+      RegistrationState.unregistering => ('Unregistered', Colors.grey),
+      RegistrationState.failed        => ('Unregistered', Colors.grey),
+      RegistrationState.offline       => ('Idle',         Colors.blueGrey),
     };
 
     return Container(
@@ -142,8 +143,7 @@ class _StatusRow extends StatelessWidget {
               decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
           const SizedBox(width: 8),
           Text(label, style: TextStyle(color: color, fontSize: 13, fontWeight: FontWeight.w600)),
-          if (state.regState == RegistrationState.registering ||
-              state.regState == RegistrationState.unregistering) ...[
+          if (state.regState == RegistrationState.registering) ...[
             const SizedBox(width: 8),
             SizedBox(width: 12, height: 12,
                 child: CircularProgressIndicator(strokeWidth: 1.5, color: color)),

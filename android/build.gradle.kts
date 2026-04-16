@@ -58,7 +58,7 @@ android {
 dependencies {
     // BareSip SDK AAR — compileOnly so the plugin compiles against it,
     // but the host app must provide it at runtime (see example/android/app/build.gradle.kts)
-    compileOnly(files("libs/baresip-sdk-release.aar"))
+    compileOnly(files("libs/BareSipSdk-release.aar"))
     // Transitive runtime deps required by the AAR
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
     implementation("androidx.core:core-ktx:1.13.1")

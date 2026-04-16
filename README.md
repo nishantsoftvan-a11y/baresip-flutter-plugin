@@ -122,7 +122,7 @@ The AAR **must be placed in the host app's `libs/` directory**, not just the plu
 
 ```bash
 mkdir -p android/app/libs
-cp path/to/BareSipSdk-release.aar android/app/libs/baresip-sdk-release.aar
+cp path/to/BareSipSdk-release.aar android/app/libs/BareSipSdk-release.aar
 ```
 
 ### 3.2 Configure `build.gradle.kts`
@@ -180,7 +180,7 @@ repositories {
 
 dependencies {
     // BareSip SDK AAR — provides classes and native .so at runtime
-    implementation(files("libs/baresip-sdk-release.aar"))
+    implementation(files("libs/BareSipSdk-release.aar"))
 
     // Transitive runtime dependencies required by the AAR
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")

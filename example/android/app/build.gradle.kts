@@ -48,7 +48,7 @@ repositories {
 dependencies {
     // BareSip SDK AAR — must be included directly in the host app so its
     // classes and native .so files are present at runtime
-    implementation(files("libs/baresip-sdk-release.aar"))
+    implementation(files("libs/BareSipSdk-release.aar"))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
     implementation("androidx.core:core-ktx:1.13.1")
 }

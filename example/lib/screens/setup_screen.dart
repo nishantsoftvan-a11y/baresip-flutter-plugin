@@ -22,7 +22,7 @@ class _SetupScreenState extends State<SetupScreen> {
   // final _passwordCtrl    = TextEditingController(text: '49631115');
   // final _displayNameCtrl = TextEditingController(text: 'user11');
 
-  final _hostCtrl        = TextEditingController(text: 'kmlio-poc-dev-nlb-6f9b68524e0f9218.elb.us-east-1.amazonaws.com:5060');
+  final _hostCtrl        = TextEditingController(text: 'kmlio-poc-dev-nlb-6f9b68524e0f9218.elb.us-east-1.amazonaws.com');
   final _portCtrl        = TextEditingController(text: '5060');
   final _stunCtrl        = TextEditingController();
 
@@ -64,12 +64,10 @@ class _SetupScreenState extends State<SetupScreen> {
       stunServer:  _stunCtrl.text.trim(),
     );
 
-    await state.initialize(config);
-    if (!mounted) return;
-    if (state.lastError == null) {
-      await state.login();
-    }
-  }  @override
+    await state.initializeAndLogin(config);
+  }  
+  
+  @override
   Widget build(BuildContext context) {
     final state = context.watch<AppState>();
     final theme = Theme.of(context);

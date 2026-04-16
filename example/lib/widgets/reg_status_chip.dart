@@ -7,12 +7,13 @@ class RegStatusChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final (label, color, icon) = switch (state) {
-      RegistrationState.registered    => ('Online',        Colors.green,  Icons.circle),
-      RegistrationState.registering   => ('Connecting…',  Colors.orange, Icons.sync),
-      RegistrationState.unregistering => ('Signing out…', Colors.orange, Icons.sync),
-      RegistrationState.failed        => ('Failed',        Colors.red,    Icons.error),
-      RegistrationState.offline       => ('Offline',       Colors.grey,   Icons.circle_outlined),
+    // Map SDK states → 4 display states
+    final (label, color, isSpinning) = switch (state) {
+      RegistrationState.registered    => ('Registered',    Colors.green,  false),
+      RegistrationState.registering   => ('Registering',   Colors.orange, true),
+      RegistrationState.unregistering => ('Unregistered',  Colors.grey,   false),
+      RegistrationState.failed        => ('Unregistered',  Colors.grey,   false),
+      RegistrationState.offline       => ('Idle',          Colors.blueGrey, false),
     };
 
     return Container(
@@ -25,13 +26,16 @@ class RegStatusChip extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          state == RegistrationState.registering || state == RegistrationState.unregistering
+          isSpinning
               ? SizedBox(
                   width: 10, height: 10,
                   child: CircularProgressIndicator(strokeWidth: 1.5, color: color),
                 )
-              : Icon(icon, color: color, size: 10),
-          const SizedBox(width: 5),
+              : Container(
+                  width: 8, height: 8,
+                  decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+                ),
+          const SizedBox(width: 6),
           Text(label, style: TextStyle(color: color, fontSize: 11, fontWeight: FontWeight.w600)),
         ],
       ),

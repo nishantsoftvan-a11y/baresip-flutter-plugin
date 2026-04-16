@@ -117,6 +117,19 @@ class BareSipFlutterPlugin : FlutterPlugin, MethodCallHandler {
                     result.success(PermissionManager.getMissingPermissions(applicationContext))
                 }
 
+                "addCustomHeader" -> {
+                    val name = call.argument<String>("name")
+                        ?: return result.error("INVALID_ARGUMENT", "name required", null)
+                    val value = call.argument<String>("value")
+                        ?: return result.error("INVALID_ARGUMENT", "value required", null)
+                    BareSipSdk.addCustomHeader(name, value)
+                    result.success(null)
+                }
+
+                // Synchronization barrier — used by Dart to ensure onListen has
+                // fired before initialize() is called. Returns immediately.
+                "ping" -> result.success(null)
+
                 else -> result.notImplemented()
             }
         } catch (e: Exception) {
@@ -134,6 +147,8 @@ class BareSipFlutterPlugin : FlutterPlugin, MethodCallHandler {
         transport   = this["transport"]   as? String ?: "tcp",
         audioCodecs = (this["audioCodecs"] as? List<String>) ?: listOf("PCMU", "PCMA", "opus", "G722"),
         stunServer  = this["stunServer"]  as? String ?: "",
+        medianat    = this["medianat"]    as? String ?: "",
+        mediaenc    = this["mediaenc"]    as? String ?: "",
         logLevel    = (this["logLevel"]   as? Int)    ?: 2
     )
 }

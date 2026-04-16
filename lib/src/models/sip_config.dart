@@ -8,6 +8,8 @@ class SipConfig {
   final String transport;
   final List<String> audioCodecs;
   final String stunServer;
+  final String medianat;
+  final String mediaenc;
   final int logLevel;
 
   const SipConfig({
@@ -19,6 +21,8 @@ class SipConfig {
     this.transport   = 'tcp',
     this.audioCodecs = const ['PCMU', 'PCMA', 'opus', 'G722'],
     this.stunServer  = '',
+    this.medianat    = '',
+    this.mediaenc    = '',
     this.logLevel    = 2,
   });
 
@@ -31,6 +35,8 @@ class SipConfig {
     'transport':   transport,
     'audioCodecs': List<String>.from(audioCodecs),
     'stunServer':  stunServer,
+    'medianat':    medianat,
+    'mediaenc':    mediaenc,
     'logLevel':    logLevel,
   };
 
@@ -43,6 +49,8 @@ class SipConfig {
     transport:   (m['transport']  as String?) ?? 'tcp',
     audioCodecs: (m['audioCodecs'] as List?)?.cast<String>() ?? const ['PCMU', 'PCMA', 'opus', 'G722'],
     stunServer:  (m['stunServer'] as String?) ?? '',
+    medianat:    (m['medianat']   as String?) ?? '',
+    mediaenc:    (m['mediaenc']   as String?) ?? '',
     logLevel:    (m['logLevel']   as int?)    ?? 2,
   );
 
@@ -57,12 +65,15 @@ class SipConfig {
       transport   == other.transport &&
       _listEq(audioCodecs, other.audioCodecs) &&
       stunServer  == other.stunServer &&
+      medianat    == other.medianat &&
+      mediaenc    == other.mediaenc &&
       logLevel    == other.logLevel;
 
   @override
   int get hashCode => Object.hash(
     username, password, displayName, host, port,
-    transport, Object.hashAll(audioCodecs), stunServer, logLevel,
+    transport, Object.hashAll(audioCodecs), stunServer, 
+    medianat, mediaenc, logLevel,
   );
 }
 

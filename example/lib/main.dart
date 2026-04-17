@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:baresip_flutter/baresip_flutter.dart';
 import 'app_state.dart';
-import 'credentials_store.dart';
 import 'screens/setup_screen.dart';
 import 'screens/home_screen.dart';
 
@@ -10,8 +10,14 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
-  // Attempt to restore saved credentials before the UI renders.
-  final savedConfig = await CredentialsStore.load();
+  // Check if credentials are stored in SDK (via DataStore)
+  final client = BareSipClient.instance;
+  final hasCredentials = await client.hasStoredCredentials();
+  Map<String, dynamic>? savedConfig;
+  
+  if (hasCredentials) {
+    savedConfig = await client.getStoredConfig();
+  }
 
   runApp(
     ChangeNotifierProvider(
@@ -22,7 +28,7 @@ void main() async {
 }
 
 class BareSipApp extends StatelessWidget {
-  final dynamic savedConfig; // SipConfig? — passed from main()
+  final Map<String, dynamic>? savedConfig; // Config from SDK DataStore
   const BareSipApp({super.key, this.savedConfig});
 
   @override
@@ -46,7 +52,7 @@ class BareSipApp extends StatelessWidget {
 /// Switches between SetupScreen and HomeScreen.
 /// On first build, if saved credentials exist, triggers auto-login.
 class _RootNavigator extends StatefulWidget {
-  final dynamic savedConfig; // SipConfig?
+  final Map<String, dynamic>? savedConfig; // Config from SDK
   const _RootNavigator({this.savedConfig});
 
   @override
@@ -69,11 +75,27 @@ class _RootNavigatorState extends State<_RootNavigator> {
     if (_autoLoginAttempted) return;
     _autoLoginAttempted = true;
     final state = context.read<AppState>();
-    // initialize() triggers notifyListeners() which rebuilds the navigator
-    // and unmounts this widget — so we must NOT check mounted after it.
-    // Instead, delegate both initialize + login to AppState so the login
-    // call is not gated on this widget's mounted state.
-    await state.initializeAndLogin(widget.savedConfig);
+    
+    // Convert saved config map to SipConfig
+    // Note: Password is not returned for security, but SDK has it stored
+    final configMap = widget.savedConfig!;
+    final config = SipConfig(
+      username: configMap['username'] as String,
+      password: '', // Password not returned for security, SDK will use stored one
+      displayName: configMap['displayName'] as String,
+      host: configMap['host'] as String,
+      port: configMap['port'] as int,
+      transport: configMap['transport'] as String,
+      autoLogin: true, // Already stored with autoLogin enabled
+    );
+    
+    // Use initializeAndLogin which handles both SDK init and login atomically
+    try {
+      await state.initializeAndLogin(config);
+    } catch (e) {
+      // If login fails, show setup screen
+      debugPrint('Auto-login failed: $e');
+    }
   }
 
   @override
@@ -84,6 +106,16 @@ class _RootNavigatorState extends State<_RootNavigator> {
     if (state.config != null) {
       return const HomeScreen();
     }
+    
+    // If we have saved config but no local config yet, show loading
+    if (widget.savedConfig != null && !_autoLoginAttempted) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+    
     return const SetupScreen();
   }
 }

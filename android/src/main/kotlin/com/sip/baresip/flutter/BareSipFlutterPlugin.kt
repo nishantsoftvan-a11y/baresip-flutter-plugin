@@ -58,12 +58,18 @@ class BareSipFlutterPlugin : FlutterPlugin, MethodCallHandler {
                         return result.error("INVALID_ARGUMENT", "host must not be blank", null)
                     }
 
-                    BareSipSdk.initialize(applicationContext, args.toSdkConfig())
+                    val config = args.toSdkConfig()
+                    val autoLogin = args.getAutoLogin()
+                    BareSipSdk.initialize(applicationContext, config, autoLogin)
                     result.success(null)
                 }
 
                 "login"     -> { BareSipSdk.login();    result.success(null) }
-                "logout"    -> { BareSipSdk.logout();   result.success(null) }
+                "logout"    -> { 
+                    val clearCredentials = call.argument<Boolean>("clearCredentials") ?: false
+                    BareSipSdk.logout(clearCredentials)
+                    result.success(null) 
+                }
                 "goOnline"  -> { BareSipSdk.goOnline(); result.success(null) }
                 "goOffline" -> { BareSipSdk.goOffline(); result.success(null) }
                 "shutdown"  -> { BareSipSdk.shutdown(); result.success(null) }
@@ -117,6 +123,31 @@ class BareSipFlutterPlugin : FlutterPlugin, MethodCallHandler {
                     result.success(PermissionManager.getMissingPermissions(applicationContext))
                 }
 
+                "hasStoredCredentials" -> {
+                    result.success(BareSipSdk.hasStoredCredentials())
+                }
+
+                "getStoredConfig" -> {
+                    val config = BareSipSdk.getStoredConfig()
+                    if (config != null) {
+                        result.success(mapOf(
+                            "username" to config.username,
+                            "displayName" to config.displayName,
+                            "host" to config.host,
+                            "port" to config.port,
+                            "transport" to config.transport
+                        ))
+                    } else {
+                        result.success(null)
+                    }
+                }
+
+                "getLaunchIntent" -> {
+                    // For now, return null - this would need activity context
+                    // In practice, the app should check intent in MainActivity
+                    result.success(null)
+                }
+
                 "addCustomHeader" -> {
                     val name = call.argument<String>("name")
                         ?: return result.error("INVALID_ARGUMENT", "name required", null)
@@ -151,4 +182,7 @@ class BareSipFlutterPlugin : FlutterPlugin, MethodCallHandler {
         mediaenc    = this["mediaenc"]    as? String ?: "",
         logLevel    = (this["logLevel"]   as? Int)    ?: 2
     )
+    
+    private fun Map<String, Any>.getAutoLogin(): Boolean = 
+        this["autoLogin"] as? Boolean ?: true
 }

@@ -11,6 +11,7 @@ class SipConfig {
   final String medianat;
   final String mediaenc;
   final int logLevel;
+  final bool autoLogin;
 
   const SipConfig({
     required this.username,
@@ -24,6 +25,7 @@ class SipConfig {
     this.medianat    = '',
     this.mediaenc    = '',
     this.logLevel    = 2,
+    this.autoLogin   = true,
   });
 
   Map<String, dynamic> toMap() => {
@@ -38,6 +40,7 @@ class SipConfig {
     'medianat':    medianat,
     'mediaenc':    mediaenc,
     'logLevel':    logLevel,
+    'autoLogin':   autoLogin,
   };
 
   factory SipConfig.fromMap(Map<String, dynamic> m) => SipConfig(
@@ -52,6 +55,7 @@ class SipConfig {
     medianat:    (m['medianat']   as String?) ?? '',
     mediaenc:    (m['mediaenc']   as String?) ?? '',
     logLevel:    (m['logLevel']   as int?)    ?? 2,
+    autoLogin:   (m['autoLogin']  as bool?)   ?? true,
   );
 
   @override
@@ -67,13 +71,14 @@ class SipConfig {
       stunServer  == other.stunServer &&
       medianat    == other.medianat &&
       mediaenc    == other.mediaenc &&
-      logLevel    == other.logLevel;
+      logLevel    == other.logLevel &&
+      autoLogin   == other.autoLogin;
 
   @override
   int get hashCode => Object.hash(
     username, password, displayName, host, port,
     transport, Object.hashAll(audioCodecs), stunServer, 
-    medianat, mediaenc, logLevel,
+    medianat, mediaenc, logLevel, autoLogin,
   );
 }
 

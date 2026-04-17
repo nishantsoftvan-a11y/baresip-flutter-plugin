@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:baresip_flutter/baresip_flutter.dart';
-import 'credentials_store.dart';
 
 /// Central state manager for the entire app.
+/// Credentials are now stored in the native SDK via DataStore.
 class AppState extends ChangeNotifier {
   final _client = BareSipClient.instance;
 
@@ -138,7 +138,7 @@ class AppState extends ChangeNotifier {
     try {
       await _client.initialize(cfg);
       config = cfg;
-      await CredentialsStore.save(cfg);
+      // Credentials are automatically saved by SDK to DataStore
       notifyListeners();
     } catch (e) {
       lastError = e.toString();
@@ -160,12 +160,23 @@ class AppState extends ChangeNotifier {
     _autoLoginDone = true;
     _setBusy(true);
     try {
-      await _client.initialize(cfg);
-      config = cfg;
-      await CredentialsStore.save(cfg);
-      notifyListeners();
-      // login() immediately after — no widget lifecycle dependency
-      await _client.login();
+      // Check if SDK already has this config stored
+      final hasStored = await _client.hasStoredCredentials();
+      
+      if (hasStored) {
+        // SDK already initialized with these credentials, just login
+        config = cfg;
+        notifyListeners();
+        await _client.login();
+      } else {
+        // First time, initialize and login
+        await _client.initialize(cfg);
+        config = cfg;
+        // Credentials are automatically saved by SDK to DataStore
+        notifyListeners();
+        // login() immediately after — no widget lifecycle dependency
+        await _client.login();
+      }
     } catch (e) {
       _autoLoginDone = false; // allow retry on error
       lastError = e.toString();
@@ -203,14 +214,14 @@ class AppState extends ChangeNotifier {
   Future<void> unregisterAndReset() async {
     _setBusy(true);
     try {
-      await _client.logout();
+      // Clear credentials from SDK DataStore
+      await _client.logout(clearCredentials: true);
     } catch (e) {
       lastError = e.toString();
     } finally {
       _setBusy(false);
     }
-    // Clear persisted credentials so we don't auto-login next time
-    await CredentialsStore.clear();
+    // Clear local state
     _autoLoginDone = false; // allow fresh login next time
     config = null;
     regState = RegistrationState.offline;

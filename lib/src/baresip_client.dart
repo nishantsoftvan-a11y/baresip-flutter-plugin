@@ -157,7 +157,8 @@ class BareSipClient {
   }
 
   Future<void> login()     async => _method.invokeMethod<void>('login');
-  Future<void> logout()    async => _method.invokeMethod<void>('logout');
+  Future<void> logout({bool clearCredentials = false}) async => 
+      _method.invokeMethod<void>('logout', {'clearCredentials': clearCredentials});
   Future<void> goOnline()  async => _method.invokeMethod<void>('goOnline');
   Future<void> goOffline() async => _method.invokeMethod<void>('goOffline');
   Future<void> shutdown()  async => _method.invokeMethod<void>('shutdown');
@@ -198,6 +199,33 @@ class BareSipClient {
 
   Future<List<String>> getMissingPermissions() async =>
       await _method.invokeListMethod<String>('getMissingPermissions') ?? [];
+
+  // ── Credential Management ─────────────────────────────────────────────────
+
+  /// Checks if credentials are stored and auto-login is enabled.
+  /// Useful for determining if the app should show login screen or auto-login.
+  Future<bool> hasStoredCredentials() async {
+    try {
+      return await _method.invokeMethod<bool>('hasStoredCredentials') ?? false;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  /// Retrieves stored SIP configuration (without password for security).
+  /// Returns null if no credentials are stored or auto-login is disabled.
+  /// Useful for displaying current user info in UI.
+  /// 
+  /// Returns a map with keys: username, displayName, host, port, transport
+  Future<Map<String, dynamic>?> getStoredConfig() async {
+    try {
+      final result = await _method.invokeMethod<Map<Object?, Object?>>('getStoredConfig');
+      if (result == null) return null;
+      return Map<String, dynamic>.from(result);
+    } catch (e) {
+      return null;
+    }
+  }
 
   // ── Advanced ──────────────────────────────────────────────────────────────
 

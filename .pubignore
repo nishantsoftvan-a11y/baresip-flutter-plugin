@@ -1,0 +1,34 @@
+# Exclude AAR files - users must build their own from BareSipSdk module
+android/libs/*.aar
+example/android/app/libs/*.aar
+
+# Exclude build artifacts
+.dart_tool/
+.packages
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# Exclude IDE files
+.idea/
+*.iml
+.vscode/
+
+# Exclude git
+.git/
+.gitignore
+
+# Exclude example build artifacts
+example/.dart_tool/
+example/.packages
+example/build/
+example/.flutter-plugins
+example/.flutter-plugins-dependencies
+example/android/build/
+example/android/app/build/
+example/android/.gradle/
+
+# Exclude large binary files
+*.so
+*.a
+*.dylib

@@ -124,11 +124,11 @@ class BareSipFlutterPlugin : FlutterPlugin, MethodCallHandler {
                 }
 
                 "hasStoredCredentials" -> {
-                    result.success(BareSipSdk.hasStoredCredentials())
+                    result.success(BareSipSdk.hasStoredCredentials(applicationContext))
                 }
 
                 "getStoredConfig" -> {
-                    val config = BareSipSdk.getStoredConfig()
+                    val config = BareSipSdk.getStoredConfig(applicationContext)
                     if (config != null) {
                         result.success(mapOf(
                             "username" to config.username,

@@ -1,7 +1,7 @@
 package com.sip.baresip.flutter
 
 import android.content.Context
-import com.sip.baresipsdk.PermissionHelper
+import com.sip.baresipsdk.api.PermissionHelper
 
 object PermissionManager {
 

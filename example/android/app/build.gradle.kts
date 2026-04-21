@@ -49,8 +49,15 @@ dependencies {
     // BareSip SDK AAR — must be included directly in the host app so its
     // classes and native .so files are present at runtime
     implementation(files("libs/BareSipSdk-release.aar"))
+    // Transitive runtime dependencies required by the AAR
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
     implementation("androidx.core:core-ktx:1.13.1")
+    // Required because SDK is a local AAR — transitive deps must be re-declared
+    implementation("androidx.appcompat:appcompat:1.7.0")
+    implementation("com.google.android.material:material:1.12.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
+    implementation("androidx.work:work-runtime-ktx:2.11.2")
 }
 
 flutter {

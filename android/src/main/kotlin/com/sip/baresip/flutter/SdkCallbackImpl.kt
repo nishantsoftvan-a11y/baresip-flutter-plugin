@@ -1,9 +1,9 @@
 package com.sip.baresip.flutter
 
-import com.sip.baresipsdk.AudioRoute
-import com.sip.baresipsdk.CallState
-import com.sip.baresipsdk.RegistrationState
-import com.sip.baresipsdk.SdkCallback
+import com.sip.baresipsdk.model.AudioRoute
+import com.sip.baresipsdk.model.CallState
+import com.sip.baresipsdk.model.RegistrationState
+import com.sip.baresipsdk.api.SdkCallback
 import io.flutter.plugin.common.EventChannel
 
 class SdkCallbackImpl(private val sink: EventChannel.EventSink?) : SdkCallback {

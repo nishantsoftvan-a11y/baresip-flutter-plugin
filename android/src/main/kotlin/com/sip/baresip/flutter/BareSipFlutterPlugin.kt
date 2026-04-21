@@ -1,11 +1,11 @@
 package com.sip.baresip.flutter
 
 import android.content.Context
-import com.sip.baresipsdk.AudioRoute
-import com.sip.baresipsdk.BareSipSdk
-import com.sip.baresipsdk.CallManager
-import com.sip.baresipsdk.SdkAudioManager
-import com.sip.baresipsdk.SdkConfig
+import com.sip.baresipsdk.model.AudioRoute
+import com.sip.baresipsdk.api.BareSipSdk
+import com.sip.baresipsdk.call.CallManager
+import com.sip.baresipsdk.system.SdkAudioManager
+import com.sip.baresipsdk.api.SdkConfig
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall

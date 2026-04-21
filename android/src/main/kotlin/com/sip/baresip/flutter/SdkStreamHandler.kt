@@ -1,7 +1,7 @@
 package com.sip.baresip.flutter
 
-import com.sip.baresipsdk.BareSipSdk
-import com.sip.baresipsdk.RegistrationState
+import com.sip.baresipsdk.api.BareSipSdk
+import com.sip.baresipsdk.model.RegistrationState
 import io.flutter.plugin.common.EventChannel
 
 class SdkStreamHandler : EventChannel.StreamHandler {

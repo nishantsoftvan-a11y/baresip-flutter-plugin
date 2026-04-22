@@ -1,6 +1,6 @@
 name: baresip_flutter
 description: A Flutter plugin for SIP VoIP calls using the BareSip SDK. Supports registration, incoming/outgoing calls, audio routing, and real-time event streaming on Android.
-version: 0.2.0
+version: 0.2.1
 
 homepage: https://github.com/nishantsoftvan-a11y/baresip-flutter-plugin
 repository: https://github.com/nishantsoftvan-a11y/baresip-flutter-plugin

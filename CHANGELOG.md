@@ -1,4 +1,10 @@
-## 0.2.0
+## 0.2.1
+
+### Fix
+
+- Fixed `BareSipSdk-release.aar` resolution when using pub.dev package — now looks for AAR in host app's `android/app/libs/` first, then falls back to plugin's own libs
+
+---
 
 ### Bug Fixes & Improvements
 

@@ -99,6 +99,46 @@ class _SetupScreenState extends State<SetupScreen> {
                 )),
                 const SizedBox(height: 36),
 
+                // Quick fill buttons
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () => setState(() {
+                          _usernameCtrl.text = '2003';
+                          _passwordCtrl.text = '70626963';
+                          _displayNameCtrl.text = 'user33';
+                        }),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: const Color(0xFF1E88E5),
+                          side: const BorderSide(color: Color(0xFF1E88E5)),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                        ),
+                        child: const Text('User 1', style: TextStyle(fontWeight: FontWeight.w600)),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () => setState(() {
+                          _usernameCtrl.text = '2004';
+                          _passwordCtrl.text = '18088307';
+                          _displayNameCtrl.text = 'user44';
+                        }),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: const Color(0xFF42A5F5),
+                          side: const BorderSide(color: Color(0xFF42A5F5)),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                        ),
+                        child: const Text('User 2', style: TextStyle(fontWeight: FontWeight.w600)),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+
                 // Form card
                 Container(
                   decoration: BoxDecoration(

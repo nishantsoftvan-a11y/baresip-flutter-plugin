@@ -14,15 +14,20 @@ class SetupScreen extends StatefulWidget {
 class _SetupScreenState extends State<SetupScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  final _usernameCtrl    = TextEditingController(text: '2003');
-  final _passwordCtrl    = TextEditingController(text: '70626963');
-  final _displayNameCtrl = TextEditingController(text: 'user33');
+  final _usernameCtrl    = TextEditingController(text: '1001');
+  final _passwordCtrl    = TextEditingController(text: '1001');
+  final _displayNameCtrl = TextEditingController(text: 'user1');
+
+  // final _usernameCtrl    = TextEditingController(text: '2003');
+  // final _passwordCtrl    = TextEditingController(text: '70626963');
+  // final _displayNameCtrl = TextEditingController(text: 'user33');
 
   // final _usernameCtrl    = TextEditingController(text: '2001');
   // final _passwordCtrl    = TextEditingController(text: '49631115');
   // final _displayNameCtrl = TextEditingController(text: 'user11');
 
-  final _hostCtrl        = TextEditingController(text: 'kmlio-poc-dev-nlb-6f9b68524e0f9218.elb.us-east-1.amazonaws.com');
+  // final _hostCtrl        = TextEditingController(text: 'kmlio-poc-dev-nlb-6f9b68524e0f9218.elb.us-east-1.amazonaws.com');
+  final _hostCtrl        = TextEditingController(text: '192.168.1.9');
   final _portCtrl        = TextEditingController(text: '5060');
   final _stunCtrl        = TextEditingController();
 
@@ -105,9 +110,9 @@ class _SetupScreenState extends State<SetupScreen> {
                     Expanded(
                       child: OutlinedButton(
                         onPressed: () => setState(() {
-                          _usernameCtrl.text = '2003';
-                          _passwordCtrl.text = '70626963';
-                          _displayNameCtrl.text = 'user33';
+                          _usernameCtrl.text = '1001';
+                          _passwordCtrl.text = '1001';
+                          _displayNameCtrl.text = 'user1';
                         }),
                         style: OutlinedButton.styleFrom(
                           foregroundColor: const Color(0xFF1E88E5),
@@ -122,9 +127,9 @@ class _SetupScreenState extends State<SetupScreen> {
                     Expanded(
                       child: OutlinedButton(
                         onPressed: () => setState(() {
-                          _usernameCtrl.text = '2004';
-                          _passwordCtrl.text = '18088307';
-                          _displayNameCtrl.text = 'user44';
+                          _usernameCtrl.text = '1002';
+                          _passwordCtrl.text = '1002';
+                          _displayNameCtrl.text = 'user2';
                         }),
                         style: OutlinedButton.styleFrom(
                           foregroundColor: const Color(0xFF42A5F5),

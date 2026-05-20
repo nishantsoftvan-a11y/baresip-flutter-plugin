@@ -14,30 +14,31 @@ class SetupScreen extends StatefulWidget {
 class _SetupScreenState extends State<SetupScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  final _usernameCtrl    = TextEditingController(text: '1001');
-  final _passwordCtrl    = TextEditingController(text: '1001');
-  final _displayNameCtrl = TextEditingController(text: 'user1');
-
   // final _usernameCtrl    = TextEditingController(text: '2003');
   // final _passwordCtrl    = TextEditingController(text: '70626963');
   // final _displayNameCtrl = TextEditingController(text: 'user33');
 
-  // final _usernameCtrl    = TextEditingController(text: '2001');
-  // final _passwordCtrl    = TextEditingController(text: '49631115');
-  // final _displayNameCtrl = TextEditingController(text: 'user11');
+  final _usernameCtrl    = TextEditingController(text: '2001');
+  final _passwordCtrl    = TextEditingController(text: '49631115');
+  final _displayNameCtrl = TextEditingController(text: 'user2001');
 
-  // final _hostCtrl        = TextEditingController(text: 'kmlio-poc-dev-nlb-6f9b68524e0f9218.elb.us-east-1.amazonaws.com');
-  final _hostCtrl        = TextEditingController(text: '192.168.1.9');
+  // final _usernameCtrl    = TextEditingController(text: '2002');
+  // final _passwordCtrl    = TextEditingController(text: '41152126');
+  // final _displayNameCtrl = TextEditingController(text: 'user2002');
+
+  final _hostCtrl        = TextEditingController(text: 'kmlio-poc-dev-nlb-6f9b68524e0f9218.elb.us-east-1.amazonaws.com');
   final _portCtrl        = TextEditingController(text: '5060');
   final _stunCtrl        = TextEditingController();
+  final _authUsernameCtrl = TextEditingController();
 
   String _transport = 'tcp';
   bool _obscurePassword = true;
   bool _advanced = false;
+  bool _useAuthUsername = false;
 
   @override
   void dispose() {
-    for (final c in [_usernameCtrl, _passwordCtrl, _displayNameCtrl, _hostCtrl, _portCtrl, _stunCtrl]) {
+    for (final c in [_usernameCtrl, _passwordCtrl, _displayNameCtrl, _hostCtrl, _portCtrl, _stunCtrl, _authUsernameCtrl]) {
       c.dispose();
     }
     super.dispose();
@@ -58,15 +59,16 @@ class _SetupScreenState extends State<SetupScreen> {
     if (!mounted) return;
     final state = context.read<AppState>();
     final config = SipConfig(
-      username:    _usernameCtrl.text.trim(),
-      password:    _passwordCtrl.text,
-      displayName: _displayNameCtrl.text.trim().isEmpty
+      username:     _usernameCtrl.text.trim(),
+      password:     _passwordCtrl.text,
+      displayName:  _displayNameCtrl.text.trim().isEmpty
           ? _usernameCtrl.text.trim()
           : _displayNameCtrl.text.trim(),
-      host:        _hostCtrl.text.trim(),
-      port:        int.tryParse(_portCtrl.text.trim()) ?? 5060,
-      transport:   _transport,
-      stunServer:  _stunCtrl.text.trim(),
+      host:         _hostCtrl.text.trim(),
+      port:         int.tryParse(_portCtrl.text.trim()) ?? 5060,
+      transport:    _transport,
+      stunServer:   _stunCtrl.text.trim(),
+      authUsername: _useAuthUsername ? _authUsernameCtrl.text.trim() : '',
     );
 
     await state.initializeAndLogin(config);
@@ -188,6 +190,8 @@ class _SetupScreenState extends State<SetupScreen> {
                           _transportPicker(),
                           const SizedBox(height: 16),
                           _field(_stunCtrl, 'STUN Server (optional)', Icons.router_outlined),
+                          const SizedBox(height: 16),
+                          _authUsernameTile(),
                         ],
 
                         const SizedBox(height: 28),
@@ -271,6 +275,66 @@ class _SetupScreenState extends State<SetupScreen> {
         ),
       ),
       validator: (v) => (v == null || v.isEmpty) ? 'Password is required' : null,
+    );
+  }
+
+  Widget _authUsernameTile() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Checkbox row
+        InkWell(
+          onTap: () => setState(() {
+            _useAuthUsername = !_useAuthUsername;
+            if (!_useAuthUsername) _authUsernameCtrl.clear();
+          }),
+          borderRadius: BorderRadius.circular(8),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4),
+            child: Row(
+              children: [
+                SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: Checkbox(
+                    value: _useAuthUsername,
+                    onChanged: (v) => setState(() {
+                      _useAuthUsername = v ?? false;
+                      if (!_useAuthUsername) _authUsernameCtrl.clear();
+                    }),
+                    activeColor: const Color(0xFF1E88E5),
+                    side: const BorderSide(color: Colors.white38),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    'My provider/PBX requires an authentication username',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: _useAuthUsername ? Colors.white70 : Colors.white38,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        // Conditional field — only shown when checkbox is ticked
+        if (_useAuthUsername) ...[
+          const SizedBox(height: 12),
+          TextFormField(
+            controller: _authUsernameCtrl,
+            style: const TextStyle(color: Colors.white),
+            decoration: _inputDeco('Auth Username', Icons.manage_accounts_outlined),
+            validator: _useAuthUsername
+                ? (v) => (v == null || v.trim().isEmpty)
+                    ? 'Auth username is required when enabled'
+                    : null
+                : null,
+          ),
+        ],
+      ],
     );
   }
 

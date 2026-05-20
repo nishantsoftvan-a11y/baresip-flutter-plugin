@@ -170,17 +170,18 @@ class BareSipFlutterPlugin : FlutterPlugin, MethodCallHandler {
 
     @Suppress("UNCHECKED_CAST")
     private fun Map<String, Any>.toSdkConfig(): SdkConfig = SdkConfig(
-        username    = this["username"]    as? String ?: "",
-        password    = this["password"]    as? String ?: "",
-        displayName = this["displayName"] as? String ?: "",
-        host        = this["host"]        as? String ?: "",
-        port        = (this["port"]       as? Int)    ?: 5060,
-        transport   = this["transport"]   as? String ?: "tcp",
-        audioCodecs = (this["audioCodecs"] as? List<String>) ?: listOf("PCMU", "PCMA", "opus", "G722"),
-        stunServer  = this["stunServer"]  as? String ?: "",
-        medianat    = this["medianat"]    as? String ?: "",
-        mediaenc    = this["mediaenc"]    as? String ?: "",
-        logLevel    = (this["logLevel"]   as? Int)    ?: 2
+        username     = this["username"]     as? String ?: "",
+        password     = this["password"]     as? String ?: "",
+        displayName  = this["displayName"]  as? String ?: "",
+        host         = this["host"]         as? String ?: "",
+        port         = (this["port"]        as? Int)    ?: 5060,
+        transport    = this["transport"]    as? String ?: "tcp",
+        audioCodecs  = (this["audioCodecs"] as? List<String>) ?: listOf("PCMU", "PCMA", "opus", "G722"),
+        stunServer   = this["stunServer"]   as? String ?: "",
+        medianat     = this["medianat"]     as? String ?: "",
+        mediaenc     = this["mediaenc"]     as? String ?: "",
+        logLevel     = (this["logLevel"]    as? Int)    ?: 2,
+        authUsername = this["authUsername"] as? String ?: ""
     )
     
     private fun Map<String, Any>.getAutoLogin(): Boolean = 
